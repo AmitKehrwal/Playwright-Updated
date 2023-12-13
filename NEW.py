@@ -4,7 +4,8 @@ import subprocess
 subprocess.run(["git", "clone", "https://github.com/AmitKehrwal/Playwright-Updated.git"])
 
 # Change to the repository directory
-%cd Playwright-Updated
+os.chdir("Playwright-Updated")
+
 
 # Give execution permission to install_brave.sh
 subprocess.run(["chmod", "+x", "install_brave.sh"])
