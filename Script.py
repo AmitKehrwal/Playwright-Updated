@@ -18,7 +18,7 @@ async def start(thread_name, user, wait_time, meetingcode, passcode):
         # Use Brave browser with specified executable path
         browser = await p.chromium.launch(
             headless=True,  # Set to True for headless mode
-            executable_path="/usr/bin/microsoft-edge"
+            executable_path="/usr/bin/brave-browser"
         )
         browser_type = p.chromium
         print(f"{thread_name} is using browser: {browser_type.name}")  # Print browser type
