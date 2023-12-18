@@ -26,7 +26,7 @@ async def start(thread_name, user, wait_time, meetingcode, passcode):
         page = await context.new_page()
         await page.goto(f'http://www.zoom.us/wc/join/{meetingcode}', timeout=200000)
 
-        # ... rest of the code ...
+        # ... (previous code)
 
         try:
             await page.click('//button[@id="onetrust-accept-btn-handler"]', timeout=5000)
@@ -47,16 +47,13 @@ async def start(thread_name, user, wait_time, meetingcode, passcode):
         except Exception as e:
             pass
 
-# ... (previous code)
-
         try:
             query = '//button[text()="Join Audio by Computer"]'
-            await asyncio.sleep(13)
             mic_button_locator = await page.wait_for_selector(query, timeout=350000)
             await asyncio.sleep(10)
-            await mic_button_locator.evaluate_handle('node => node.click()')
+            await mic_button_locator.click()
             print(f"{thread_name} microphone: Mic aayenge.")
-        
+
             # Add the following steps to enable microphone permission
             try:
                 # Wait for the browser to prompt for microphone access
@@ -66,12 +63,11 @@ async def start(thread_name, user, wait_time, meetingcode, passcode):
                 print(f"{thread_name} microphone permission enabled.")
             except Exception as e:
                 print(f"{thread_name} unable to enable microphone permission: ", e)
-        
+
         except Exception as e:
             print(f"{thread_name} microphone: Mic nahe aayenge. ", e)
-        
-        # ... (remaining code)
 
+        # ... (remaining code)
 
         print(f"{thread_name} sleep for {wait_time} seconds ...")
         while running and wait_time > 0:
