@@ -17,7 +17,7 @@ async def start(thread_name, user, wait_time, meetingcode, passcode):
     async with async_playwright() as p:
         # Use Brave browser with specified executable path
         browser = await p.chromium.launch(
-            headless=False,  # Set to True for headless mode
+            headless=True,  # Set to True for headless mode
             executable_path="/usr/bin/brave-browser"
         )
         browser_type = p.chromium
