@@ -17,13 +17,17 @@ async def start(thread_name, user, wait_time, meetingcode, passcode):
     async with async_playwright() as p:
         # Use Brave browser with specified executable path
         browser = await p.chromium.launch(
-            headless=True,
+            headless=False,  # Set to True for headless mode
             executable_path="/usr/bin/brave-browser"
         )
         browser_type = p.chromium
         print(f"{thread_name} is using browser: {browser_type.name}")  # Print browser type
         context = await browser.new_context()
         page = await context.new_page()
+
+        # Grant microphone permissions directly
+        await context.grant_permissions(["microphone"])
+
         await page.goto(f'http://www.zoom.us/wc/join/{meetingcode}', timeout=200000)
 
         # ... (previous code)
