@@ -19,3 +19,4 @@ sudo apt-get install -y brave-browser
 pip install playwright
 playwright install
 pip install getindianname
+pip install faker
