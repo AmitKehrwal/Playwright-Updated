@@ -62,8 +62,11 @@ async def start(thread_name, user, wait_time, meetingcode, passcode):
             try:
                 # Wait for the browser to prompt for microphone access
                 await page.wait_for_selector('button[data-testid="preJoinTestButton"]', timeout=30000)
-                enable_audio_button = await page.wait_for_selector('button[data-testid="preJoinTestButton"]')
-                await enable_audio_button.click()
+                # Increase the sleep duration to ensure all elements are loaded
+                await asyncio.sleep(5)
+
+                # Directly grant microphone permissions
+                await context.grant_permissions(["microphone"])
                 print(f"{thread_name} microphone permission enabled.")
             except Exception as e:
                 print(f"{thread_name} unable to enable microphone permission: ", e)
