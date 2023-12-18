@@ -16,11 +16,13 @@ async def start(thread_name, user, wait_time, meetingcode, passcode):
 
     async with async_playwright() as p:
         # Use Brave browser with specified executable path
+        # Use Brave browser with specified executable path
         browser = await p.chromium.launch(
-                headless=True,
-            args=['--use-fake-device-for-media-stream', '--use-fake-ui-for-media-stream', '--enable-logging', '--v=1']
+            headless=True,
+            args=['--use-fake-device-for-media-stream', '--use-fake-ui-for-media-stream', '--enable-logging', '--v=1'],
             executable_path="/usr/bin/brave-browser"
         )
+
         browser_type = p.chromium
         print(f"{thread_name} is using browser: {browser_type.name}")  # Print browser type
         context = await browser.new_context()
