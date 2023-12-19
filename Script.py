@@ -23,6 +23,7 @@ async def start(thread_name, user, wait_time, meetingcode, passcode):
             executable_path="/usr/bin/brave-browser"
         )
 
+
         browser_type = p.chromium
         print(f"{thread_name} is using browser: {browser_type.name}")  # Print browser type
         context = await browser.new_context()
