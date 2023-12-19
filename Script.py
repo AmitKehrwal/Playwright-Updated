@@ -3,9 +3,9 @@ import threading
 from concurrent.futures import ThreadPoolExecutor
 from playwright.async_api import async_playwright
 import nest_asyncio
-import random
-import getindianname as name
+import getindianname as name  # Assuming you have a function to generate Indian names in this module
 
+import random
 nest_asyncio.apply()
 
 # Flag to indicate whether the script is running
@@ -15,36 +15,18 @@ async def start(thread_name, user, wait_time, meetingcode, passcode):
     print(f"{thread_name} started!")
 
     async with async_playwright() as p:
-        # Launch Brave browser in non-headless mode with hardware permissions
+        # Use Brave browser with specified executable path
         browser = await p.chromium.launch(
-            headless=True,  # Set to True for production, False for development/testing
-            args=[
-                '--use-fake-device-for-media-stream',
-                '--use-fake-ui-for-media-stream',
-                '--enable-logging',
-                '--v=1',
-                '--enable-experimental-web-platform-features',
-                '--use-fake-device-for-media-stream',
-                '--use-fake-ui-for-media-stream',
-                '--enable-logging',
-                '--v=1',
-                '--enable-experimental-web-platform-features',# Necessary for some features
-            ],
+            headless=True,
             executable_path="/usr/bin/brave-browser"
         )
-
         browser_type = p.chromium
-        print(f"{thread_name} is using browser: {browser_type.name}")
-
+        print(f"{thread_name} is using browser: {browser_type.name}")  # Print browser type
         context = await browser.new_context()
         page = await context.new_page()
-
-        # Grant microphone permissions explicitly
-        await context.grant_permissions(["microphone"])
-
         await page.goto(f'http://www.zoom.us/wc/join/{meetingcode}', timeout=200000)
 
-        # ... (previous code)
+        # ... rest of the code ...
 
         try:
             await page.click('//button[@id="onetrust-accept-btn-handler"]', timeout=5000)
@@ -67,16 +49,13 @@ async def start(thread_name, user, wait_time, meetingcode, passcode):
 
         try:
             query = '//button[text()="Join Audio by Computer"]'
+            await asyncio.sleep(13)
             mic_button_locator = await page.wait_for_selector(query, timeout=350000)
             await asyncio.sleep(10)
             await mic_button_locator.evaluate_handle('node => node.click()')
             print(f"{thread_name} microphone: Mic aayenge.")
-        
         except Exception as e:
             print(f"{thread_name} microphone: Mic nahe aayenge. ", e)
-
-
-        # ... (remaining code)
 
         print(f"{thread_name} sleep for {wait_time} seconds ...")
         while running and wait_time > 0:
@@ -100,7 +79,7 @@ async def main():
         tasks = []
         for i in range(number):
             try:
-                # Generate a random Indian name using getindianname
+                # Replace name.randname() with your getindianname function
                 user = name.randname()
             except IndexError:
                 break
