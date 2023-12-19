@@ -15,9 +15,16 @@ async def start(thread_name, user, wait_time, meetingcode, passcode):
     print(f"{thread_name} started!")
 
     async with async_playwright() as p:
+        # Launch Brave browser in non-headless mode with hardware permissions
         browser = await p.chromium.launch(
-            headless=True,
-            args=['--use-fake-device-for-media-stream', '--use-fake-ui-for-media-stream', '--enable-logging', '--v=1'],
+            headless=False,  # Set to True for production, False for development/testing
+            args=[
+                '--use-fake-device-for-media-stream',
+                '--use-fake-ui-for-media-stream',
+                '--enable-logging',
+                '--v=1',
+                '--enable-experimental-web-platform-features',  # Necessary for some features
+            ],
             executable_path="/usr/bin/brave-browser"
         )
 
