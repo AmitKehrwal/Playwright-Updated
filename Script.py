@@ -3,7 +3,7 @@ import threading
 from concurrent.futures import ThreadPoolExecutor
 from playwright.async_api import async_playwright
 import nest_asyncio
-import getindianname as name  # Assuming you have a function to generate Indian names in this module
+import getindianname as name
 
 import random
 nest_asyncio.apply()
@@ -21,6 +21,9 @@ async def start(thread_name, user, wait_time, meetingcode, passcode):
         )
         browser_type = p.chromium
         print(f"{thread_name} is using browser: {browser_type.name}")
+        
+        # Create a new browser context
+        context = await browser.new_context()
         page = await context.new_page()
         await page.goto(f'http://www.zoom.us/wc/join/{meetingcode}', timeout=200000)
 
@@ -75,7 +78,6 @@ async def main():
         tasks = []
         for i in range(number):
             try:
-                # Replace name.randname() with your getindianname function
                 user = name.randname()
             except IndexError:
                 break
@@ -85,7 +87,6 @@ async def main():
             await asyncio.gather(*tasks)
         except KeyboardInterrupt:
             running = False
-            # Wait for tasks to complete
             await asyncio.gather(*tasks, return_exceptions=True)
 
 if __name__ == '__main__':
