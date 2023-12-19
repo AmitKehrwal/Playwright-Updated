@@ -21,9 +21,6 @@ async def start(thread_name, user, wait_time, meetingcode, passcode):
         )
         browser_type = p.chromium
         print(f"{thread_name} is using browser: {browser_type.name}")
-
-        context = await browser.new_context(
-            permissions=["microphone=granted"]
         )
         page = await context.new_page()
         await page.goto(f'http://www.zoom.us/wc/join/{meetingcode}', timeout=200000)
