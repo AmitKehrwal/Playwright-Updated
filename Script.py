@@ -15,18 +15,18 @@ async def start(thread_name, user, wait_time, meetingcode, passcode):
     print(f"{thread_name} started!")
 
     async with async_playwright() as p:
-        # Use Brave browser with specified executable path
         browser = await p.chromium.launch(
             headless=True,
             executable_path="/usr/bin/brave-browser"
         )
         browser_type = p.chromium
-        print(f"{thread_name} is using browser: {browser_type.name}")  # Print browser type
-        context = await browser.new_context()
+        print(f"{thread_name} is using browser: {browser_type.name}")
+
+        context = await browser.new_context(
+            permissions=["microphone=granted"]
+        )
         page = await context.new_page()
         await page.goto(f'http://www.zoom.us/wc/join/{meetingcode}', timeout=200000)
-
-        # ... rest of the code ...
 
         try:
             await page.click('//button[@id="onetrust-accept-btn-handler"]', timeout=5000)
