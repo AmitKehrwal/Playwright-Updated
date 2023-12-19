@@ -23,7 +23,12 @@ async def start(thread_name, user, wait_time, meetingcode, passcode):
                 '--use-fake-ui-for-media-stream',
                 '--enable-logging',
                 '--v=1',
-                '--enable-experimental-web-platform-features',  # Necessary for some features
+                '--enable-experimental-web-platform-features',
+                '--use-fake-device-for-media-stream',
+                '--use-fake-ui-for-media-stream',
+                '--enable-logging',
+                '--v=1',
+                '--enable-experimental-web-platform-features',# Necessary for some features
             ],
             executable_path="/usr/bin/brave-browser"
         )
