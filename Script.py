@@ -29,7 +29,7 @@ async def start(name, wait_time, meetingcode, passcode):
         context = await browser.new_context(permissions=['microphone'])
         page = await context.new_page()
 
-        await page.goto(f'https://zoom.us/wc/join/{meetingcode}', timeout=200000)
+        await page.goto(f'http://app.zoom.us/wc/join/{meetingcode}', timeout=200000)
 
         try:
             await page.click('//button[@id="onetrust-accept-btn-handler"]', timeout=5000)
