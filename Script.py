@@ -59,7 +59,7 @@ def start(name, user, wait_time, meetingcode, passcode):
 
 
 def main():
-    sec = 10
+    sec = 90
     wait_time = sec * 60
     workers = []
     for i in range(number):
