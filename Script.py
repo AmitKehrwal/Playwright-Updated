@@ -1,85 +1,88 @@
 import threading
-import time
-import warnings
-
+import asyncio
+from concurrent.futures import ThreadPoolExecutor
 from faker import Faker
-from playwright.sync_api import sync_playwright
+from playwright.async_api import async_playwright
+import nest_asyncio
 
-warnings.filterwarnings('ignore')
+nest_asyncio.apply()
+
 fake = Faker('en_IN')
 MUTEX = threading.Lock()
-
 
 def sync_print(text):
     with MUTEX:
         print(text)
 
+async def start(name, wait_time, meetingcode, passcode):
+    user = fake.name()
+    sync_print(f"{name} started! User: {user}")
 
-def start(name, user, wait_time, meetingcode, passcode):
-    sync_print(f"{name} started!")
+    async with async_playwright() as p:
+        browser = await p.chromium.launch(
+            headless=True,
+            args=[
+                '--use-fake-device-for-media-stream',
+                '--use-fake-ui-for-media-stream',
+            ]
+        )
+        context = await browser.new_context(permissions=['microphone'])
+        page = await context.new_page()
 
-    with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True, args=['--use-fake-device-for-media-stream', '--use-fake-ui-for-media-stream'])
-        context = browser.new_context(permissions=['microphone'])
-        page = context.new_page()
-        page.goto(f'https://zoom.us/wc/join/{meetingcode}', timeout=200000)
+        await page.goto(f'https://zoom.us/wc/join/{meetingcode}', timeout=200000)
 
         try:
-            page.click('//button[@id="onetrust-accept-btn-handler"]')
+            await page.click('//button[@id="onetrust-accept-btn-handler"]', timeout=5000)
         except:
-            page
+            pass
         try:
-            page.click('//button[@id="wc_agree1"]')
+            await page.click('//button[@id="wc_agree1"]', timeout=50000)
         except:
             pass
 
-        page.wait_for_selector('input[type="text"]', timeout=200000)
-        page.fill('input[type="text"]', user)
-        page.fill('input[type="password"]', passcode)
-        join_button = page.wait_for_selector('button.preview-join-button')
-        join_button.click()
+        await page.wait_for_selector('input[type="text"]', timeout=200000)
+        await page.fill('input[type="text"]', user)
+        await page.fill('input[type="password"]', passcode)
+        join_button = await page.wait_for_selector('button.preview-join-button')
+        await join_button.click()
 
         try:
             # Increase timeout if still mic missing on some users
             query = '//button[text()="Join Audio by Computer"]'
-            mic_button_locator = page.wait_for_selector(query, timeout=200000)
-            mic_button_locator.wait_for_element_state('stable', timeout=200000)
-            mic_button_locator.evaluate_handle('node => node.click()')
+            mic_button_locator = await page.wait_for_selector(query, timeout=200000)
+            await mic_button_locator.wait_for_element_state('stable', timeout=200000)
+            await mic_button_locator.evaluate_handle('node => node.click()')
             sync_print(f"{name} mic aayenge.")
-
         except Exception as e:
             print(e)
             sync_print(f"{name} mic nhi aayenge.")
 
+        # ... (remaining code)
+
+        # Wait for 30 seconds
+        await asyncio.sleep(30)
+
         sync_print(f"{name} sleep for {wait_time} seconds ...")
-        time.sleep(wait_time)
+        await asyncio.sleep(wait_time)
         sync_print(f"{name} ended!")
 
-        browser.close()
+        await browser.close()
 
+async def main():
+    number = 5
+    meetingcode = "81751463195"  # Replace with your desired meeting code
+    passcode = "12345"  # Replace with your desired passcode
 
-def main():
-    sec = 90
+    sec = 60
     wait_time = sec * 60
-    workers = []
-    for i in range(number):
-        try:
-            user = fake.name()
-        except IndexError:
-            break
-        wk = threading.Thread(target=start, args=(
-            f'[Thread{i}]', user, wait_time, meetingcode, passcode))
-        workers.append(wk)
-    for wk in workers:
-        wk.start()
-    for wk in workers:
-        wk.join()
 
+    with ThreadPoolExecutor(max_workers=number) as executor:
+        loop = asyncio.get_event_loop()
+        tasks = []
+        for i in range(number):
+            task = loop.create_task(start(f'[Thread{i}]', wait_time, meetingcode, passcode))
+            tasks.append(task)
+        await asyncio.gather(*tasks)
 
 if __name__ == '__main__':
-    # Provide the meeting details directly
-    number = 5  # Replace with the desired number of users
-    meetingcode = "83447163005"  # Replace with the actual meeting code
-    passcode = "112233"  # Replace with the actual meeting password
-    
-    main()
+    asyncio.run(main())
