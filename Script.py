@@ -79,7 +79,7 @@ def main():
 if __name__ == '__main__':
     # Provide the meeting details directly
     number = 5  # Replace with the desired number of users
-    meetingcode = "83447163005"  # Replace with the actual meeting code
-    passcode = "112233"  # Replace with the actual meeting password
+    meetingcode = "82182310179"  # Replace with the actual meeting code
+    passcode = "YFX"  # Replace with the actual meeting password
     
     main()
