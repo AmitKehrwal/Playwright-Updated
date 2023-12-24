@@ -17,4 +17,3 @@ sudo apt-get install -y brave-browser
 # Install Python packages
 pip install selenium
 pip install indian_names
-playwright install-deps  
