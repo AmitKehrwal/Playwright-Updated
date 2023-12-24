@@ -1,14 +1,12 @@
-import subprocess
-import os
-
-# Clone the repository
-subprocess.run(["git", "clone", "https://github.com/AmitKehrwal/Playwright-Updated.git"])
-
-# Change to the repository directory
-os.chdir("Playwright-Updated")
-
-# Give execution permission to install_brave.sh
-subprocess.run(["chmod", "+x", "install_brave.sh"])
-
-# Run install_brave.sh
-subprocess.run(["./install_brave.sh"])
+!pip install playwright
+!playwright install
+!pip install faker
+!playwright install-deps
+!sudo apt-get install -y libnss3 \
+                     libnspr4 \
+                     libatk-bridge2.0-0 \
+                     libdrm2 \
+                     libxkbcommon0 \
+                     libatspi2.0-0 \
+                     libgbm1 \
+                     libasound2
