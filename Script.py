@@ -74,7 +74,7 @@ async def main():
     passcode = "12345"  # Replace with your desired passcode
 
     sec = 60
-    wait_time = sec * 60
+    wait_time = sec * 90
 
     with ThreadPoolExecutor(max_workers=number) as executor:
         loop = asyncio.get_event_loop()
