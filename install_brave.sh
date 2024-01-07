@@ -1,5 +1,6 @@
 #!/bin/bash
 
 # Install Python packages
-pip install selenium
-pip install indian_names
+pip install playwright
+playwright install
+pip install getindianname
