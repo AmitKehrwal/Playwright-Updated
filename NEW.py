@@ -19,18 +19,20 @@ async def start(user, wait_time, meetingcode, passcode):
         print(f"{user} joined.")
 
     async with async_playwright() as p:
-        browser = await p.firefox.launch(
+        browser = await p.chromium.launch(
             headless=True,
             args=['--use-fake-device-for-media-stream', '--use-fake-ui-for-media-stream']
         )
         context = await browser.new_context()
 
+        # Remove thread name from the user
+        user = user.split("_Thread")[0]
+
+        # Microphone permission for each thread
+        await context.grant_permissions(['microphone'])
+
         page = await context.new_page()
         await page.goto(f'http://app.zoom.us/wc/join/{meetingcode}', timeout=200000)
-
-        # Explicitly request microphone permission using JavaScript multiple times
-        for _ in range(5):
-            await page.evaluate('() => { navigator.mediaDevices.getUserMedia({ audio: true }); }')
 
         try:
             await page.click('//button[@id="onetrust-accept-btn-handler"]', timeout=5000)
@@ -53,7 +55,8 @@ async def start(user, wait_time, meetingcode, passcode):
 
         try:
             await page.wait_for_selector('button.join-audio-by-voip__join-btn', timeout=300000)
-            query = 'button[class*="join-audio-by-voip__join-btn"]'
+            query = 'button[class*=\"join-audio-by-voip__join-btn\"]'
+            # await asyncio.sleep(13)
             mic_button_locator = await page.query_selector(query)
             await asyncio.sleep(5)
             await mic_button_locator.evaluate_handle('node => node.click()')
@@ -67,15 +70,13 @@ async def start(user, wait_time, meetingcode, passcode):
             wait_time -= 1
         print(f"{user} ended!")
 
-    # Close the context and browser outside of the async with block
-    await context.close()
-    await browser.close()
+        await browser.close()
 
 async def main():
     global running
-    number = 5
-    meetingcode = "82770760919"
-    passcode = "468111"
+    number = int(input("Enter number of Users: "))
+    meetingcode = input("Enter meeting code (No Space): ")
+    passcode = input("Enter Password (No Space): ")
 
     sec = 90
     wait_time = sec * 80
@@ -86,11 +87,14 @@ async def main():
         for i in range(number):
             try:
                 # Generate a random Indian name using getindianname
-                user = name.randname()
+                user = name.randname() + f"_Thread_{i + 1}"
             except IndexError:
                 break
             task = loop.create_task(start(user, wait_time, meetingcode, passcode))
             tasks.append(task)
+
+            # Add a delay between launching browsers
+            await asyncio.sleep(1)
 
     try:
         await asyncio.gather(*tasks, return_exceptions=True)
