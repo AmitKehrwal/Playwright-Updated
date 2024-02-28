@@ -2,8 +2,7 @@
 
 # Install Python packages
 pip install playwright
-pip install pyppeteer
-pip install pyppeteer_stealth
+pip install apscheduler
 playwright install
 pip install indian_names
 pip install getindianname
